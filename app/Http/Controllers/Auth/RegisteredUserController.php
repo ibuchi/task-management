@@ -4,11 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 
 class RegisteredUserController extends Controller
@@ -20,22 +18,24 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): Response
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'min:3', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'photo' => ['sometimes', 'file', 'mimes:png,jpg'],
+            'phone' => ['required', 'digits_between:10,15', 'unique:' . User::class],
+            'address' => ['required', 'min:3']
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->string('password')),
-        ]);
+        if ($request->hasFile('photo')) {
+            $fileName = Str::slug($request->name) . "-profile-image." . $request->photo->getClientOriginalExtension();
+            $path = $request->file('photo')->storeAs('profile', $fileName);
 
-        event(new Registered($user));
+            $validated['photo'] = $path;
+        }
 
-        Auth::login($user);
+        User::create($validated);
 
-        return response()->noContent();
+        return Response::api('User registered!');
     }
 }

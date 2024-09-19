@@ -17,9 +17,12 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
-        $request->session()->regenerate();
+        $user = Auth::user();
 
-        return response()->noContent();
+        return Response::api([
+            'message' => 'Login Successful!',
+            'data' => $user->loginDetails()
+        ]);
     }
 
     /**
@@ -33,6 +36,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return response()->noContent();
+        return Response::api('Logout Successful!');
     }
 }

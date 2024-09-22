@@ -4,7 +4,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      php: 8.x # Update PHP version as needed
+      php: 8.2 # Update PHP version as needed
     commands:
       - echo 'about to call dockerd'
       - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2&

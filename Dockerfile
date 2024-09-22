@@ -20,8 +20,8 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set the working directory
 WORKDIR /var/www
 
-# If you need to fix SSL
-COPY ./openssl.cnf /etc/ssl/openssl.cnf
+# If you need to fix SSL (currently commented out)
+# COPY ./openssl.cnf /etc/ssl/openssl.cnf
 
 # Copy Composer files and install dependencies
 COPY composer.json composer.lock ./

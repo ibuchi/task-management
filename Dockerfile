@@ -28,6 +28,8 @@
 # # Expose the port that Apache is running on
 # EXPOSE 80
 
+
+
 FROM php:8.2-fpm
 
 # Install system dependencies
